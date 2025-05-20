@@ -1,0 +1,28 @@
+.header {
+  background-color: #1b8541;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header a {
+  color: white;
+  margin-left: 1rem;
+  text-decoration: none;
+}
+
+.header a:hover {
+  text-decoration: underline;
+}
+
+.btn-success {
+  background-color: #1b8541;
+  border-color: #1b8541;
+}
+
+.btn-success:hover {
+  background-color: #146c33;
+  border-color: #146c33;
+}
