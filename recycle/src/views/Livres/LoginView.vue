@@ -74,7 +74,12 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import api from '@/services/api'
+
+const router = useRouter()
+const authStore = useAuthStore()
 const showLogin = ref(true)
 
 const toggleForm = () => {
@@ -128,10 +133,11 @@ async function apiPost(url, data) {
 
 async function handleLogin() {
   try {
-    const response = await apiPost('/login', loginForm)
-    if (response.success) {
-      alert('Login realizado com sucesso!')
-      // redirecionar, salvar token, etc
+    const response = await authStore.login(loginForm.login, loginForm.password)
+    
+    console.log(response)
+    if (response) {  // Se temos uma resposta (token), o login foi bem sucedido
+      router.push('/ecoponto')
     } else {
       alert('Falha no login')
     }

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import HomeView from '../views/Livres/HomeView.vue'
 import CadastroBeneficio from '@/views/Ecoponto/CadastroBeneficio.vue'
 import CadastroEcoponto from '@/views/Livres/CadastroEcoponto.vue'
@@ -22,36 +23,42 @@ const router = createRouter({
       path: '/beneficio',
       name: 'beneficio',
       component: CadastroBeneficio,
+      meta: { requiresAuth: true }
     },
     {
       path: '/cadastro-ecoponto',
       name: 'cadastro-ecoponto',
       component: CadastroEcoponto,
     },
-     {
+    {
       path: '/ecoponto',
       name: 'ecoponto',
       component: MenuEcoponto,
+      meta: { requiresAuth: true }
     },
     {
       path: '/ecoponto/solicitacoes',
       name: 'ecoponto-solicitacoes',
       component: SolicitacoesView,
+      meta: { requiresAuth: true }
     },
-     {
+    {
       path: '/ecoponto/evento',
       name: 'ecoponto-evento',
       component: EventoEcoponto,
+      meta: { requiresAuth: true }
     },
     {
       path: '/ecoponto/gerenciar',
       name: 'ecoponto-gerenciar',
       component: EcoGerenciar,
+      meta: { requiresAuth: true }
     },
     {
       path: '/ecoponto/conf',
       name: 'coinf-ecoponto',
       component: ConfEcoponto,
+      meta: { requiresAuth: true }
     },
     {
       path: '/cadastro-usuario',
@@ -59,9 +66,9 @@ const router = createRouter({
       component: CadastroUsuario,
     },
     {
-      path:'/login',
+      path: '/login',
       name: 'login',
-      component:LoginView
+      component: LoginView
     },
     {
       path: '/about',
@@ -72,6 +79,19 @@ const router = createRouter({
       component: () => import('../views/Livres/AboutView.vue'),
     },
   ],
+})
+
+// Navigation guard simplificado
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+  
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    // Se a rota requer autenticação e o usuário não está autenticado, redireciona para login
+    next('/login')
+  } else {
+    // Caso contrário, permite a navegação
+    next()
+  }
 })
 
 export default router
