@@ -1,7 +1,8 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-success">
     <div class="container">
-      <a class="navbar-brand" href="#">EcoPonto</a>
+      <router-link  to="/ecoponto" class="nav-link navbar-brand">Ecoponto</router-link>
+
       <button
         class="navbar-toggler"
         type="button"
@@ -17,13 +18,16 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <router-link to="/solicitacoes" class="nav-link">Solicitações</router-link>
+            <router-link to="/ecoponto/solicitacoes" class="nav-link">Solicitações</router-link>
+          </li>
+           <li class="nav-item">
+            <router-link to="/ecoponto/evento" class="nav-link">Eventos</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/configurar" class="nav-link">Configurar Ecoponto</router-link>
+            <router-link to="/ecoponto/conf" class="nav-link">Configurar Ecoponto</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/beneficio-cadastro" class="nav-link active">Cadastrar Benefício</router-link>
+            <router-link to="/beneficio" class="nav-link active">Cadastrar Benefício</router-link>
           </li>
           <li class="nav-item">
             <a href="/logout" class="nav-link">Sair</a>

@@ -1,9 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/Livres/HomeView.vue'
-import CadastroBeneficio from '@/views/Usuario/CadastroBeneficio.vue'
+import CadastroBeneficio from '@/views/Ecoponto/CadastroBeneficio.vue'
 import CadastroEcoponto from '@/views/Livres/CadastroEcoponto.vue'
 import CadastroUsuario from '@/views/Livres/CadastroUsuario.vue'
 import LoginView from '@/views/Livres/LoginView.vue'
+import MenuEcoponto from '@/views/Ecoponto/MenuEcoponto.vue'
+import SolicitacoesView from '@/views/Ecoponto/SolicitacoesView.vue'
+import EventoEcoponto from '@/views/Ecoponto/EventoEcoponto.vue'
+import EcoGerenciar from '@/views/Ecoponto/EcoGerenciar.vue'
+import ConfEcoponto from '@/views/Ecoponto/ConfEcoponto.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,6 +27,31 @@ const router = createRouter({
       path: '/cadastro-ecoponto',
       name: 'cadastro-ecoponto',
       component: CadastroEcoponto,
+    },
+     {
+      path: '/ecoponto',
+      name: 'ecoponto',
+      component: MenuEcoponto,
+    },
+    {
+      path: '/ecoponto/solicitacoes',
+      name: 'ecoponto-solicitacoes',
+      component: SolicitacoesView,
+    },
+     {
+      path: '/ecoponto/evento',
+      name: 'ecoponto-evento',
+      component: EventoEcoponto,
+    },
+    {
+      path: '/ecoponto/gerenciar',
+      name: 'ecoponto-gerenciar',
+      component: EcoGerenciar,
+    },
+    {
+      path: '/ecoponto/conf',
+      name: 'coinf-ecoponto',
+      component: ConfEcoponto,
     },
     {
       path: '/cadastro-usuario',

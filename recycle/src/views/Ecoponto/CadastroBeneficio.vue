@@ -112,8 +112,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import NavBar from "../components/NavBar.vue";
-import "../assets/ecoponto.css"
+import NavBar from "../../components/NavBar.vue";
+import "../../assets/ecoponto.css"
 // Dados iniciais exemplo
 const beneficios = ref([
   {
