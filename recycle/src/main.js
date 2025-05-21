@@ -1,8 +1,5 @@
 // Importa CSS do Bootstrap
 
-
-
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
