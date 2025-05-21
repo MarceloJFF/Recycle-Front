@@ -13,7 +13,6 @@
               <th>Tipo de Resíduo</th>
               <th>Aceito</th>
               <th>Pontos por Kg</th>
-              <th>Preço por Kg (R$)</th>
             </tr>
           </thead>
           <tbody>
@@ -23,11 +22,9 @@
                 <input type="checkbox" v-model="residuo.aceito" />
               </td>
               <td>
-                <input type="number" class="form-control form-control-sm" v-model.number="residuo.pontos" min="0" required />
+                <input v-if="residuo.aceito" type="number" class="form-control form-control-sm" v-model.number="residuo.pontosKg" min="0" required />
               </td>
-              <td>
-                <input type="number" class="form-control form-control-sm" v-model.number="residuo.preco" min="0" step="0.01" required />
-              </td>
+              
             </tr>
           </tbody>
         </table>
@@ -38,22 +35,65 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import NavBar from "../../components/NavBar.vue";
+import { useAuthStore } from '@/stores/auth';
+import api from '@/services/api';
+
+const authStore = useAuthStore();
 
 const residuos = ref([
-  { tipo: 'Plástico', aceito: true, pontos: 10, preco: 2.50 },
-  { tipo: 'Vidro', aceito: false, pontos: 8, preco: 1.80 },
-  { tipo: 'Papel', aceito: true, pontos: 5, preco: 1.20 },
-  { tipo: 'Metal', aceito: false, pontos: 12, preco: 3.00 }
+  { tipo: 'Vidro', aceito: true, pontosKg: 10, tipoLixoId:1 },
+  { tipo: 'Metal', aceito: false, pontosKg: 8,  tipoLixoId:2 },
+  { tipo: 'Papel', aceito: false, pontosKg: 8,  tipoLixoId:3 },
+  { tipo: 'Plastico', aceito: true, pontosKg: 5,  tipoLixoId:4 },
+  { tipo: 'Eletronico', aceito: false, pontosKg: 12,  tipoLixoId:5 }
 ])
 
-function salvarConfiguracoes() {
-  console.log('Configurações salvas:', residuos.value)
-  alert('Configurações salvas com sucesso!')
-  // Aqui você pode fazer um POST com axios para sua API
-  // axios.post('/api/ecoponto/atualizar', residuos.value)
+async function carregarConfiguracoes() {
+  try {
+    const userLogin = authStore.user.login;
+    const response = await api.get(`/gerenciamento-ecoponto-tipo-lixo/tipos-lixo-aceitos?login=${userLogin}`);
+    
+    if (response.data && response.data.length > 0) {
+      // Atualiza os dados com as configurações do servidor
+      residuos.value = residuos.value.map(residuo => {
+        const configuracao = response.data.find(config => config.tipoLixoId === residuo.tipoLixoId);
+        if (configuracao) {
+          return {
+            ...residuo,
+            aceito: configuracao.aceito,
+            pontosKg: configuracao.pontosKg
+          };
+        }
+        return residuo;
+      });
+      console.log(residuos.value);
+    }
+  } catch (error) {
+    console.error('Erro ao carregar configurações:', error);
+    alert('Erro ao carregar configurações. Por favor, tente novamente.');
+  }
 }
+
+async function salvarConfiguracoes() {
+  try {
+    const userLogin = authStore.user.login;
+    
+    // Fazer a requisição para a API com login como query parameter
+    await api.post(`/gerenciamento-ecoponto-tipo-lixo/salvar/?login=${userLogin}`, residuos.value);
+    
+    alert('Configurações salvas com sucesso!');
+  } catch (error) {
+    console.error('Erro ao salvar configurações:', error);
+    alert('Erro ao salvar configurações. Por favor, tente novamente.');
+  }
+}
+
+// Carrega as configurações quando o componente é montado
+onMounted(() => {
+  carregarConfiguracoes();
+});
 </script>
 
 <style scoped>

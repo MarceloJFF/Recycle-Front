@@ -23,7 +23,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // Verifica se o endpoint atual está na lista de endpoints públicos
-    const isPublicEndpoint = publicEndpoints.some(endpoint => 
+    const isPublicEndpoint = publicEndpoints.some(endpoint =>
       config.url.includes(endpoint)
     );
 
@@ -37,20 +37,6 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Interceptor para tratar erros de autenticação
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      const authStore = useAuthStore();
-      authStore.logout();
-      alert('Sua sessão expirou ou o token é inválido. Por favor, faça login novamente.');
-      window.location.href = '/login';
-    }
     return Promise.reject(error);
   }
 );

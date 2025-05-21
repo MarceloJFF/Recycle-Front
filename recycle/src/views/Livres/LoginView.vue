@@ -134,12 +134,10 @@ async function apiPost(url, data) {
 async function handleLogin() {
   try {
     const response = await authStore.login(loginForm.login, loginForm.password)
-    
-    console.log(response)
-    if (response) {  // Se temos uma resposta (token), o login foi bem sucedido
+    if (authStore.user && authStore.user.tipo=="ecoponto") {  // Se temos uma resposta (token), o login foi bem sucedido
       router.push('/ecoponto')
     } else {
-      alert('Falha no login')
+      router.push('/usuario')
     }
   } catch (err) {
     alert('Erro no login')

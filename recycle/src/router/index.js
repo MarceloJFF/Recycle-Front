@@ -10,6 +10,8 @@ import SolicitacoesView from '@/views/Ecoponto/SolicitacoesView.vue'
 import EventoEcoponto from '@/views/Ecoponto/EventoEcoponto.vue'
 import EcoGerenciar from '@/views/Ecoponto/EcoGerenciar.vue'
 import ConfEcoponto from '@/views/Ecoponto/ConfEcoponto.vue'
+import UsuarioView from '@/views/Usuario/UsuarioView.vue'
+import BeneficioUsuario from '@/views/Usuario/BeneficioUsuario.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +36,18 @@ const router = createRouter({
       path: '/ecoponto',
       name: 'ecoponto',
       component: MenuEcoponto,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/usuario',
+      name: 'usuario',
+      component: UsuarioView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/usuario/beneficio',
+      name: 'usuario-beneficio',
+      component: BeneficioUsuario,
       meta: { requiresAuth: true }
     },
     {

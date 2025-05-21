@@ -33,7 +33,7 @@
           <tr v-for="beneficio in beneficiosFiltrados" :key="beneficio.id">
             <td>{{ beneficio.id }}</td>
             <td>{{ beneficio.descricao }}</td>
-            <td>{{ beneficio.pontos }}</td>
+            <td>{{ beneficio.qtdPontosNecessarios }}</td>
             <td>{{ formatarData(beneficio.dataExpiracao) }}</td>
             <td>{{ beneficio.status }}</td>
             <td>
@@ -77,14 +77,24 @@
               ></textarea>
             </div>
             <div class="mb-3">
-              <label for="pontos" class="form-label">Pontos Necessários</label>
+              <label for="qtdPontosNecessarios" class="form-label">Pontos Necessários</label>
               <input
-                id="pontos"
-                v-model.number="form.pontos"
+                id="qtdPontosNecessarios"
+                v-model.number="form.qtdPontosNecessarios"
                 type="number"
                 class="form-control"
                 min="1"
                 required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="empresa" class="form-label">Empresa</label>
+              <input
+                id="empresa"
+                v-model="form.empresa"
+                type="text"
+                class="form-control"
+                placeholder="Nome da empresa"
               />
             </div>
             <div class="mb-3">
@@ -96,6 +106,15 @@
                 class="form-control"
                 required
               />
+            </div>
+            <div class="mb-3 form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="expirado"
+                v-model="form.expirado"
+              />
+              <label class="form-check-label" for="expirado">Benefício Expirado</label>
             </div>
           </div>
           <div class="modal-footer">
@@ -113,7 +132,14 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import NavBar from "../../components/NavBar.vue";
+import { useAuthStore } from '@/stores/auth';
+import api from '@/services/api';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../assets/ecoponto.css"
+
+const authStore = useAuthStore();
+
 // Dados iniciais exemplo
 const beneficios = ref([
   {
@@ -137,9 +163,12 @@ const modoEdicao = ref(false);
 const form = ref({
   id: null,
   descricao: "",
-  pontos: null,
+  qtdPontosNecessarios: null,
+  empresa: "",
+  expirado: false,
   dataExpiracao: "",
-  status: "Ativo",
+  ecopontoId: null,
+  loginUsuario: ""
 });
 
 const modal = ref(null);
@@ -162,49 +191,113 @@ const beneficiosFiltrados = computed(() => {
 function abrirModal(beneficio = null) {
   if (beneficio) {
     modoEdicao.value = true;
-    form.value = { ...beneficio }; // Clona para editar
+    form.value = {
+      id: beneficio.id,
+      descricao: beneficio.descricao,
+      qtdPontosNecessarios: beneficio.qtdPontosNecessarios,
+      empresa: beneficio.empresa || "",
+      expirado: beneficio.expirado || false,
+      dataExpiracao: beneficio.dataExpiracao ? new Date(beneficio.dataExpiracao).toISOString().split('T')[0] : "",
+      ecopontoId: beneficio.ecopontoId || null,
+      loginUsuario: beneficio.loginUsuario
+    };
   } else {
     modoEdicao.value = false;
     form.value = {
       id: null,
       descricao: "",
-      pontos: null,
+      qtdPontosNecessarios: null,
+      empresa: "",
+      expirado: false,
       dataExpiracao: "",
-      status: "Ativo",
+      ecopontoId: null,
+      loginUsuario: ""
     };
   }
-  const modalEl = modal.value;
-  bootstrap.Modal.getOrCreateInstance(modalEl).show();
+  const modalEl = document.getElementById('modalBeneficio');
+  if (modalEl) {
+    const modal = new window.bootstrap.Modal(modalEl);
+    modal.show();
+  }
 }
 
 // Fechar modal
 function fecharModal() {
-  const modalEl = modal.value;
-  bootstrap.Modal.getInstance(modalEl)?.hide();
+  const modalEl = document.getElementById('modalBeneficio');
+  if (modalEl) {
+    const modal = window.bootstrap.Modal.getInstance(modalEl);
+    if (modal) {
+      modal.hide();
+    }
+  }
+}
+
+// Carregar benefícios
+async function carregarBeneficios() {
+  try {
+    // Atualiza os dados do usuário antes de fazer a requisição
+    authStore.atualizarDadosUsuario();
+    
+    const decodedToken = authStore.currentUser;
+    if (!decodedToken || !decodedToken.upn) {
+      alert('Erro: Usuário não autenticado');
+      return;
+    }
+
+    const response = await api.get('/beneficios', {
+      params: {
+        login: decodedToken.upn
+      }
+    });
+    beneficios.value = response.data;
+    console.log(beneficios.value);
+  } catch (error) {
+    console.error('Erro ao carregar benefícios:', error);
+    alert('Erro ao carregar benefícios');
+  }
 }
 
 // Salvar (adicionar ou editar)
-function salvarBeneficio() {
-  if (modoEdicao.value) {
-    // Editar benefício
-    const index = beneficios.value.findIndex((b) => b.id === form.value.id);
-    if (index !== -1) {
-      beneficios.value[index] = { ...form.value };
+async function salvarBeneficio() {
+  try {
+    // Atualiza os dados do usuário antes de fazer a requisição
+    authStore.atualizarDadosUsuario();
+    
+    const decodedToken = authStore.currentUser;
+    if (!decodedToken || !decodedToken.upn) {
+      alert('Erro: Usuário não autenticado');
+      return;
     }
-  } else {
-    // Adicionar novo benefício
-    const novoId =
-      beneficios.value.length > 0
-        ? Math.max(...beneficios.value.map((b) => b.id)) + 1
-        : 1;
-    beneficios.value.push({ ...form.value, id: novoId });
+
+    const beneficioData = {
+      id: form.value.id || null,
+      descricao: form.value.descricao,
+      qtdPontosNecessarios: form.value.qtdPontosNecessarios,
+      empresa: form.value.empresa,
+      expirado: form.value.expirado,
+      dataExpiracao: form.value.dataExpiracao ? new Date(form.value.dataExpiracao).toISOString() : null,
+      ecopontoId: form.value.ecopontoId || null,
+      loginUsuario: decodedToken.upn
+    };
+
+    if (modoEdicao.value) {
+      await api.put(`/beneficios/${form.value.id}`, beneficioData);
+    } else {
+      await api.post('/beneficios', beneficioData);
+    }
+
+    await carregarBeneficios();
+    fecharModal();
+    alert(modoEdicao.value ? 'Benefício atualizado com sucesso!' : 'Benefício cadastrado com sucesso!');
+  } catch (error) {
+    console.error('Erro ao salvar benefício:', error);
+    alert('Erro ao salvar benefício');
   }
-  fecharModal();
 }
 
 // Inicializa referência do modal Bootstrap após o componente montar
 onMounted(() => {
-  modal.value = document.getElementById("modalBeneficio");
+  carregarBeneficios();
 });
 </script>
 

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { jwtDecode } from 'jwt-decode';
 import api from '@/services/api';
 import AcessoDto from '@/dto/AcessoDto';
@@ -7,6 +7,22 @@ import AcessoDto from '@/dto/AcessoDto';
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token') || null);
   const user = ref(new AcessoDto());
+
+  // Função para atualizar os dados do usuário a partir do token
+  function atualizarDadosUsuario() {
+    if (token.value) {
+      try {
+        const decodedToken = jwtDecode(token.value);
+        user.value = {
+          login: decodedToken.upn,
+          tipo: decodedToken.groups?.[0] || null
+        };
+      } catch (error) {
+        console.error('Erro ao decodificar token:', error);
+        logout();
+      }
+    }
+  }
 
   const isAuthenticated = computed(() => {
     if (!token.value) return false;
@@ -36,14 +52,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (response.data) {
         token.value = response.data;
         localStorage.setItem('token', response.data);
-
-        // Atualiza o user com os dados do token decodificado
-        const decodedToken = jwtDecode(response.data);
-        user.value = {
-          login: decodedToken.upn,
-          tipo: decodedToken.groups?.[0] || null
-        };
-
+        atualizarDadosUsuario();
         return response.data;
       }
     } catch (error) {
@@ -62,6 +71,9 @@ export const useAuthStore = defineStore('auth', () => {
     return token.value;
   }
 
+  // Inicializa os dados do usuário ao criar o store
+  atualizarDadosUsuario();
+
   return {
     token,
     user,
@@ -69,6 +81,7 @@ export const useAuthStore = defineStore('auth', () => {
     currentUser,
     login,
     logout,
-    getToken
+    getToken,
+    atualizarDadosUsuario
   };
 });

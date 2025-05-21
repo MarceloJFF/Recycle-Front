@@ -8,14 +8,12 @@
         </div>
         <nav>
           <ul>
-  <li><router-link to="/ecopontos-proximos" id="nav-ecopontos">Ecopontos Próximos</router-link></li>
-  <li><router-link to="/acoes-voluntarias" id="nav-acoes">Ações Voluntárias</router-link></li>
-  <li><router-link to="/cadastro-ecoponto" id="nav-recompensas">Cadastrar Ponto de Coleta</router-link></li>
-  <li><router-link to="/como-reciclar" id="nav-como-reciclar">Como Reciclar</router-link></li>
-  <li><router-link to="/login" class="login-btn" id="nav-login">Login para Usuarios</router-link></li>
-
-</ul>
-
+            <li><router-link to="/ecopontos-proximos" id="nav-ecopontos">Ecopontos Próximos</router-link></li>
+            <li><router-link to="/acoes-voluntarias" id="nav-acoes">Ações Voluntárias</router-link></li>
+            <li><router-link to="/cadastro-ecoponto" id="nav-recompensas">Cadastrar Ponto de Coleta</router-link></li>
+            <li><router-link to="/como-reciclar" id="nav-como-reciclar">Como Reciclar</router-link></li>
+            <li><router-link to="/login" class="login-btn" id="nav-login">Login para Usuarios</router-link></li>
+          </ul>
         </nav>
       </div>
     </header>
@@ -26,7 +24,34 @@
         <p>Recicle é uma plataforma digital que incentiva o descarte correto de resíduo e a adoção de práticas sustentáveis</p>
         <div class="search-container">
           <input type="text" class="search-input" v-model="search" placeholder="Digite seu CEP ou endereço" />
-          <button class="search-btn" @click="buscar"><i class="fas fa-search"></i> Buscar</button>
+          <button class="search-btn" @click="buscarEcopontos"><i class="fas fa-search"></i> Buscar</button>
+        </div>
+      </section>
+
+      <!-- Resultados da Busca -->
+      <section v-if="ecopontos.length > 0" class="search-results">
+        <h2 class="section-title">Ecopontos Encontrados</h2>
+        <div class="ecopontos-grid">
+          <div v-for="ecoponto in ecopontos" :key="ecoponto.id" class="ecoponto-card">
+            <div class="ecoponto-header">
+              <h3>{{ ecoponto.nome }}</h3>
+              <span class="badge" :class="ecoponto.status === 'Ativo' ? 'badge-success' : 'badge-warning'">
+                {{ ecoponto.status }}
+              </span>
+            </div>
+            <div class="ecoponto-body">
+              <p><i class="fas fa-map-marker-alt"></i> {{ ecoponto.endereco }}</p>
+              <p><i class="fas fa-clock"></i> {{ ecoponto.horarioFuncionamento }}</p>
+              <div class="tipos-aceitos">
+                <h4>Tipos Aceitos:</h4>
+                <div class="tipos-grid">
+                  <span v-for="tipo in ecoponto.tiposAceitos" :key="tipo" class="tipo-badge">
+                    {{ tipo }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -102,12 +127,20 @@
 <script setup>
 import { ref } from 'vue'
 import '../../assets/styles.css'
+import api from '@/services/api'
 
 const search = ref('')
+const ecopontos = ref([])
 const showModal = ref(false)
 
-const buscar = () => {
-  alert(`Buscar por: ${search.value}`)
+const buscarEcopontos = async () => {
+  try {
+    const response = await api.get('/ecoponto')
+    ecopontos.value = response.data
+  } catch (error) {
+    console.error('Erro ao buscar ecopontos:', error)
+    alert('Erro ao buscar ecopontos. Por favor, tente novamente.')
+  }
 }
 
 const pilares = [
@@ -171,3 +204,198 @@ const footer = [
   }
 ]
 </script>
+
+<style scoped>
+/* Estilos gerais */
+:root {
+  --primary-color: #1b8541;
+  --secondary-color: #146c33;
+  --text-color: #333;
+  --light-bg: #f8f9fa;
+  --white: #ffffff;
+}
+
+/* Header */
+.header-container {
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: 1rem 2rem;
+}
+
+.logo {
+  color: var(--white);
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+nav ul li a {
+  color: var(--white);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s;
+}
+
+nav ul li a:hover {
+  background-color: var(--secondary-color);
+  border-radius: 4px;
+}
+
+/* Hero Section */
+.hero {
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.search-container {
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.search-input {
+  padding: 0.8rem;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  width: 70%;
+}
+
+.search-btn {
+  background-color: var(--secondary-color);
+  color: var(--white);
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-btn:hover {
+  background-color: #0d4d24;
+}
+
+/* Ecopontos Grid */
+.ecopontos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.ecoponto-card {
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+}
+
+.ecoponto-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.badge-success {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.badge-warning {
+  background-color: #ffc107;
+  color: var(--text-color);
+}
+
+.tipos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tipo-badge {
+  background-color: var(--light-bg);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+/* Features Section */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.feature-card {
+  background-color: var(--white);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.feature-icon {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+/* Footer */
+footer {
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: 3rem 2rem 1rem;
+}
+
+.footer-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-column h3 {
+  margin-bottom: 1rem;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-column a {
+  color: var(--white);
+  text-decoration: none;
+}
+
+.social-icons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.social-icons a {
+  color: var(--white);
+  font-size: 1.5rem;
+}
+
+.copyright {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+</style>
