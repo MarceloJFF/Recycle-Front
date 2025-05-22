@@ -161,7 +161,11 @@ const beneficiosFiltrados = computed(() => {
 // Função para carregar os benefícios do backend
 async function carregarBeneficios() {
   try {
-    const response = await api.get('/beneficios/ativos')
+    const response = await api.get('/beneficios/ativos',{
+      params: {
+        loginUsuario: useAuthStore().user.login
+      }
+    })
     beneficios.value = response.data
   } catch (error) {
     console.error('Erro ao carregar benefícios:', error)
@@ -173,10 +177,10 @@ async function carregarBeneficios() {
 async function solicitarBeneficio(beneficio) {
   try {
     const userLogin = authStore.user.login
-    await api.post(`/beneficios/solicitar?login=${userLogin}`, {
-      beneficioId: beneficio.id
-    })
-    
+  await api.post(`/troca-beneficio/?login=${userLogin}`, {
+    id: beneficio.id // Note que mudamos de 'beneficioId' para 'id' para match com o DTO
+  })
+
     // Atualiza o status do benefício
     beneficio.solicitado = true
     alert('Benefício solicitado com sucesso!')

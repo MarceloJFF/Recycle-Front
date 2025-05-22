@@ -4,11 +4,11 @@
     <main class="container mt-4">
       <h2 class="mb-4 text-white">Solicitações de Entrega</h2>
 
-      <ul class="list-group">
+      <ul class="list-group" v-if="solicitacoes.length > 0">
         <li
           class="list-group-item d-flex justify-content-between align-items-center"
           v-for="(solicitacao, index) in solicitacoes"
-          :key="index"
+          :key="solicitacao.id"
         >
           <div>
             <strong>Usuário:</strong> {{ solicitacao.usuario }}<br />
@@ -21,36 +21,51 @@
           </div>
         </li>
       </ul>
+
+      <div v-else class="alert alert-info text-center">
+        Nenhuma solicitação pendente.
+      </div>
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import NavBar from "../../components/NavBar.vue";
+import { ref, onMounted } from 'vue'
+import NavBar from "../../components/NavBar.vue"
+import { useAuthStore } from '@/stores/auth'
+import api from '@/services/api'
 
-const solicitacoes = ref([
-  {
-    usuario: 'João Silva',
-    tipo: 'Plástico',
-    quantidade: '5 kg'
-  },
-  {
-    usuario: 'Maria Souza',
-    tipo: 'Vidro',
-    quantidade: '3 kg'
+const solicitacoes = ref([])
+const authStore = useAuthStore()
+
+async function carregarSolicitacoes() {
+  try {
+    const response = await api.get('/entregas', {
+      params: {
+        loginEcoponto: authStore.user.login
+      }
+    }) // Substitua pela URL real da sua API
+    if (!response.ok) throw new Error('Erro ao buscar solicitações')
+    const data = await response.json()
+    solicitacoes.value = data
+  } catch (error) {
+    console.error('Erro ao carregar solicitações:', error)
   }
-])
+}
 
 function aceitarSolicitacao(index) {
   alert(`Solicitação de ${solicitacoes.value[index].usuario} aceita.`)
-  // Aqui você pode fazer algo como remover da lista ou enviar para API
+  // Aqui você pode fazer algo como enviar requisição para o backend
 }
 
 function recusarSolicitacao(index) {
   alert(`Solicitação de ${solicitacoes.value[index].usuario} recusada.`)
-  // Aqui também pode fazer outras ações
+  // Aqui também pode enviar para o backend
 }
+
+onMounted(() => {
+  carregarSolicitacoes()
+})
 </script>
 
 <style scoped>
@@ -103,5 +118,4 @@ function recusarSolicitacao(index) {
   background-color: #146c33;
   border-color: #146c33;
 }
-
 </style>

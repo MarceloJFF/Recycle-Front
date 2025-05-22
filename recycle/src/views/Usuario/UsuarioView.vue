@@ -30,31 +30,44 @@
     <main class="container py-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3">Pontos de Coleta Próximos</h1>
-        <span class="badge bg-primary fs-5">Saldo de Pontos: <strong>120</strong></span>
+        <span class="badge bg-primary fs-5">Saldo de Pontos: <strong>
+          {{ pontosUsuario }}
+        </strong></span>
       </div>
 
       <div class="list-group">
         <div
           v-for="(item, index) in pontos"
           :key="index"
-          class="list-group-item"
+          class="list-group-item mb-4"
+
         >
           <div class="d-flex w-100 justify-content-between align-items-center">
             <div>
-              <h5 class="mb-1">{{ item.nome }}</h5>
-              <p class="mb-1">{{ item.descricao }}</p>
+              <h5 class="mb-1">Nome: {{ item.nome }}</h5>
+              <p class="mb-1">Descrição: {{ item.descricao }}</p>
+              <p>CEP: {{ item.cep }}</p>
               <small :class="item.tipo === 'Ecoponto' ? 'text-success' : 'text-info'">
                 <i :class="item.tipo === 'Ecoponto' ? 'bi bi-check2-circle me-1' : 'bi bi-building me-1'"></i>
                 Tipo: {{ item.tipo }}
               </small>
             </div>
-            <small><i class="bi bi-geo-alt-fill me-1"></i>{{ item.distancia }}</small>
-          </div>
+            <small>
+    <a
+      :href="`https://www.google.com/maps?q=${item.latitude},${item.longitude}`"
+      target="_blank"
+      rel="noopener"
+      class="text-decoration-none text-body"
+    >
+      <i class="bi bi-geo-alt-fill me-1"></i>{{ item.distancia }}
+    </a>
+  </small>   
+       </div>
           <button
             class="btn btn-sm btn-primary mt-2"
             data-bs-toggle="modal"
             data-bs-target="#solicitarEntregaModal"
-            @click="abrirSolicitacao(item.nome)"
+            @click="abrirSolicitacao(item)"
           >
             <i class="bi bi-box-arrow-in-up-right me-1"></i>Solicitar entrega de resíduo
           </button>
@@ -133,8 +146,8 @@
           <div class="modal-body">
             <ul class="list-group">
               <li class="list-group-item" v-for="(solicitacao, i) in solicitacoes" :key="i">
-                <strong>{{ solicitacao.local }}</strong> - {{ solicitacao.material }} - {{ solicitacao.quantidade }} kg -
-                Status: <span :class="solicitacao.status === 'Aceito' ? 'badge bg-success' : 'badge bg-warning text-dark'">{{ solicitacao.status }}</span>
+                <strong>Local - {{ solicitacao.ecoponto.descricao }}</strong> Pontos Gerados- {{ solicitacao.qtdPontosGerados }} -
+                Status: <span :class="solicitacao.status ? 'badge bg-success' : 'badge bg-warning text-dark'">{{ solicitacao.status ? 'Aceito' : 'Pendente' }}</span>
               </li>
             </ul>
           </div>
@@ -150,50 +163,104 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth'
+import api from '@/services/api'
 
-const pontos = ref([
-  {
-    nome: 'Ecoponto Central',
-    descricao: 'Recebe plástico, vidro e metal',
-    tipo: 'Ecoponto',
-    distancia: '2,5 km'
-  },
-  {
-    nome: 'ReciclaMais Ltda',
-    descricao: 'Compra papel e alumínio',
-    tipo: 'Empresa',
-    distancia: '3,7 km'
-  }
-]);
-
+// Substitua os dados mockados por uma chamada real à API
+const pontos = ref([]);
 const ecopontoSelecionado = ref('');
 const tipoMaterial = ref('');
 const quantidadeKg = ref(null);
+const solicitacoes = ref([]);
+const pontosUsuario = ref(0);
 
-const solicitacoes = ref([
-  { local: 'Ecoponto Central', material: 'Plástico', quantidade: 5, status: 'Pendente' },
-  { local: 'ReciclaMais Ltda', material: 'Vidro', quantidade: 3, status: 'Aceito' }
-]);
+// Carrega os dados do usuário ao montar o componente
+async function carregarPerfil() {
+  try {
+    const response = await api.get('/usuario/perfil', {
+      params: {
+        login: useAuthStore().user.login
+      }
+    });
+    pontosUsuario.value = response.data.saldoPontos;
+  } catch (error) {
+    console.error('Erro ao carregar perfil:', error);
+    alert('Erro ao carregar informações do usuário.');
+  }
 
-function abrirSolicitacao(nome) {
-  ecopontoSelecionado.value = nome;
+
+}
+
+async function carregarSolicitacoes(){
+  const response = await api.get('/entregas/', {
+    params: { loginUsuario: useAuthStore().user.login }
+  });
+  solicitacoes.value = response.data;
+  console.log(solicitacoes.value)
+}
+// Nova função para carregar os ecopontos
+async function carregarEcopontos() {
+  try {
+    const response = await api.get('/ecoponto');
+    pontos.value = response.data.map(ecoponto => ({
+      id: ecoponto.id,
+      nome: ecoponto.nome,
+      descricao: ecoponto.descricao,
+      tipo: 'Ecoponto' , // Você pode ajustar conforme os dados retornados
+      distancia: calcularDistancia(ecoponto.latitude, ecoponto.longitude), // Adicione esta função se tiver geolocalização
+      latitude: ecoponto.latitude,
+      longitude: ecoponto.longitude,
+      cep: ecoponto.cep
+    }));
+  } catch (error) {
+    console.error('Erro ao carregar ecopontos:', error);
+    alert('Erro ao carregar pontos de coleta.');
+  }
+}
+
+// Função auxiliar para calcular distância (opcional)
+function calcularDistancia(lat, lng) {
+  // Implemente sua lógica de cálculo de distância aqui
+  // Retorne uma string formatada como "2,5 km"
+  return "Lat: "+lat+" Lng: "+lng; // Substitua por cálculo real
+}
+
+onMounted(async() => {
+  await carregarPerfil();
+  await carregarEcopontos();
+  await carregarSolicitacoes();
+    //carregarBeneficios();
+});
+
+
+// Restante do código permanece igual...
+function abrirSolicitacao(ecoponto) {
+  
+  ecopontoSelecionado.value = ecoponto;
   tipoMaterial.value = '';
   quantidadeKg.value = null;
 }
 
 function enviarSolicitacao() {
+ 
   if (!ecopontoSelecionado.value || !tipoMaterial.value || !quantidadeKg.value) return;
-
-  solicitacoes.value.push({
-    local: ecopontoSelecionado.value,
-    material: getTipoMaterialNome(tipoMaterial.value),
-    quantidade: quantidadeKg.value,
-    status: 'Pendente'
+  const response =  api.post('/entregas/nova', {
+      idEcoponto: ecopontoSelecionado.value.id,
+      tipoLixoId: Number(tipoMaterial.value),
+      kg: Number(quantidadeKg.value)
+    }, {
+      params: { loginUsuario: useAuthStore().user.login }
   });
-
+  console.log(ecopontoSelecionado.value.id,tipoMaterial.value,quantidadeKg.value)
+  if(response){
+    alert('Solicitação enviada com sucesso');
+  }else{
+    alert('Erro ao enviar solicitação');
+  }
   const modal = bootstrap.Modal.getInstance(document.getElementById('solicitarEntregaModal'));
   modal.hide();
+  window.location.reload();
 }
 
 function getTipoMaterialNome(codigo) {
