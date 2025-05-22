@@ -18,13 +18,13 @@
       </div>
     </header>
 
-    <main>
-      <section class="hero">
-        <h1>RECOMPENSAS VERDE</h1>
-        <p>Recicle é uma plataforma digital que incentiva o descarte correto de resíduo e a adoção de práticas sustentáveis</p>
+    <main class="bg-light">
+      <section class="hero bg-verde">
+        <h1 class="text-white">RECOMPENSAS VERDE</h1>
+        <p class="text-white">Recicle é uma plataforma digital que incentiva o descarte correto de resíduo e a adoção de práticas sustentáveis</p>
         <div class="search-container">
-          <input type="text" class="search-input" v-model="search" placeholder="Digite seu CEP ou endereço" />
-          <button class="search-btn" @click="buscarEcopontos"><i class="fas fa-search"></i> Buscar</button>
+          <input type="text" class="search-input bg-white" v-model="search" placeholder="Digite seu CEP ou endereço" />
+          <button class="search-btn bg-accent text-white" @click="buscarEcopontos"><i class="fas fa-search "></i> Buscar</button>
         </div>
       </section>
 
@@ -57,8 +57,8 @@
 
       <h2 class="section-title">Nossos Pilares Principais</h2>
 
-      <section class="features">
-        <div v-for="(item, index) in pilares" :key="index" class="feature-card">
+      <section class="features ">
+        <div v-for="(item, index) in pilares" :key="index" class="feature-card bg-verde">
           <div class="feature-icon">
             <i :class="item.icon"></i>
           </div>
@@ -76,7 +76,7 @@
 
       <h2 class="section-title">Como Reciclar o seu Lixo</h2>
       <section class="features">
-        <div v-for="(etapa, index) in etapas" :key="index" class="feature-card">
+        <div v-for="(etapa, index) in etapas" :key="index" class="feature-card bg-verde">
           <div class="feature-icon">
             <i :class="etapa.icon"></i>
           </div>
@@ -231,6 +231,23 @@ const footer = [
   align-items: center;
 }
 
+
+.bg-verde {
+  background-color: #2e7d32 !important;
+}
+.bg-white { /* #ffffff - Branco */
+  background-color: #ffffff !important;
+   
+}
+.text-white{
+ color: #ffffff !important;
+}
+.bg-accent { /* #f1c40f - Amarelo */
+  background-color: #f1c40f !important;
+}
+.bg-text { /* #2c3e50 - Azul Petróleo */
+  background-color: #2c3e50 !important;
+}
 .logo {
   color: var(--white);
   font-size: 1.8rem;
@@ -368,8 +385,8 @@ nav ul li a:hover {
   background-color: var(--white);
 }
 
-.feature-card {
-  background-color: var(--container-bg);
+.feature-card[data-v-ed0881ab] {
+  background-color: var(--secondary-color);
   padding: 2.5rem;
   border-radius: 12px;
   box-shadow: var(--shadow);

@@ -12,6 +12,7 @@ import EcoGerenciar from '@/views/Ecoponto/EcoGerenciar.vue'
 import ConfEcoponto from '@/views/Ecoponto/ConfEcoponto.vue'
 import UsuarioView from '@/views/Usuario/UsuarioView.vue'
 import BeneficioUsuario from '@/views/Usuario/BeneficioUsuario.vue'
+import ComoReciclar from '@/views/Livres/ComoReciclar.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -92,6 +93,13 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/Livres/AboutView.vue'),
     },
+    // Adicionando a rota para a página de como reciclar
+    {
+  path: '/como-reciclar',
+  name: 'como-reciclar',
+  component: ComoReciclar,
+}
+
   ],
 })
 
