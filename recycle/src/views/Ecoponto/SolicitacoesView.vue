@@ -2,7 +2,7 @@
   <NavBar></NavBar>
   <div>
     <main class="container mt-4">
-      <h2 class="mb-4 text-white">Solicitações de Entrega</h2>
+      <h2 class="mb-4 text">Solicitações de Entrega</h2>
 
       <ul class="list-group" v-if="solicitacoes.length > 0">
         <li
@@ -11,13 +11,13 @@
           :key="solicitacao.id"
         >
           <div>
-            <strong>Usuário:</strong> {{ solicitacao.usuario }}<br />
-            <strong>Tipo de Resíduo:</strong> {{ solicitacao.tipo }}<br />
-            <strong>Quantidade:</strong> {{ solicitacao.quantidade }}
+            <strong>Usuário:</strong> {{ solicitacao.usuario.primeiroNome }}- {{solicitacao.usuario.ultimoNome}}<br />
+            <strong>Pontos Gerados:</strong> {{ solicitacao.qtdPontosGerados }}<br />
+            <strong>Quantidade:</strong> {{ solicitacao.deferido?'Deferida':'Pendente'}}
           </div>
           <div>
-            <button class="btn btn-success btn-sm me-2" @click="aceitarSolicitacao(index)">Aceitar</button>
-            <button class="btn btn-danger btn-sm" @click="recusarSolicitacao(index)">Recusar</button>
+            <button v-if="solicitacao.deferido == false" class="btn btn-success btn-sm me-2" @click="aceitarSolicitacao(index)">Aceitar</button>
+            <button v-if="solicitacao.deferido == false" class="btn btn-danger btn-sm" @click="recusarSolicitacao(index)">Recusar</button>
           </div>
         </li>
       </ul>
@@ -38,30 +38,48 @@ import api from '@/services/api'
 const solicitacoes = ref([])
 const authStore = useAuthStore()
 
+
+
 async function carregarSolicitacoes() {
   try {
-    const response = await api.get('/entregas', {
+    const response = await api.get('/entregas/ecoponto/', {
       params: {
-        loginEcoponto: authStore.user.login
+        loginUsuario: authStore.user.login
       }
-    }) // Substitua pela URL real da sua API
-    if (!response.ok) throw new Error('Erro ao buscar solicitações')
-    const data = await response.json()
-    solicitacoes.value = data
+    })
+    solicitacoes.value = response.data
+    console.log(solicitacoes)
   } catch (error) {
     console.error('Erro ao carregar solicitações:', error)
   }
 }
+async function aceitarSolicitacao(index) {
+  try {
+    const solicitacao = solicitacoes.value[index]
+    const response = await api.put(`/entregas/${solicitacao.id}?deferido=true`)
 
-function aceitarSolicitacao(index) {
-  alert(`Solicitação de ${solicitacoes.value[index].usuario} aceita.`)
-  // Aqui você pode fazer algo como enviar requisição para o backend
+    solicitacoes.value[index].deferido = true
+    alert(`Solicitação de ${solicitacao.usuario.primeiroNome} aceita com sucesso!`)
+  } catch (error) {
+    console.error('Erro ao aceitar solicitação:', error)
+    alert('Erro ao processar a solicitação')
+  }
 }
 
-function recusarSolicitacao(index) {
-  alert(`Solicitação de ${solicitacoes.value[index].usuario} recusada.`)
-  // Aqui também pode enviar para o backend
+async function recusarSolicitacao(index) {
+  try {
+    const solicitacao = solicitacoes.value[index]
+    const response = await api.put(`/entregas/${solicitacao.id}?deferido=false`)
+
+    solicitacoes.value[index].deferido = false
+    alert(`Solicitação de ${solicitacao.usuario.primeiroNome} recusada com sucesso!`)
+  } catch (error) {
+    console.error('Erro ao recusar solicitação:', error)
+    alert('Erro ao processar a solicitação')
+  }
+
 }
+
 
 onMounted(() => {
   carregarSolicitacoes()

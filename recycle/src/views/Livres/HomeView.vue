@@ -8,8 +8,7 @@
         </div>
         <nav>
           <ul>
-            <li><router-link to="/ecopontos-proximos" id="nav-ecopontos">Ecopontos Próximos</router-link></li>
-            <li><router-link to="/acoes-voluntarias" id="nav-acoes">Ações Voluntárias</router-link></li>
+            <li><router-link to="/" id="nav-acoes">Buscar Pontos de Coleta</router-link></li>
             <li><router-link to="/cadastro-ecoponto" id="nav-recompensas">Cadastrar Ponto de Coleta</router-link></li>
             <li><router-link to="/como-reciclar" id="nav-como-reciclar">Como Reciclar</router-link></li>
             <li><router-link to="/login" class="login-btn" id="nav-login">Login para Usuarios</router-link></li>
@@ -29,26 +28,31 @@
       </section>
 
       <!-- Resultados da Busca -->
-      <section v-if="ecopontos.length > 0" class="search-results">
+      <section id="ecopontos-search" v-if="ecopontos.length > 0" class="search-results">
         <h2 class="section-title">Ecopontos Encontrados</h2>
         <div class="ecopontos-grid">
           <div v-for="ecoponto in ecopontos" :key="ecoponto.id" class="ecoponto-card">
-            <div class="ecoponto-header">
-              <h3>{{ ecoponto.nome }}</h3>
+            <div class="ecoponto-header ">
+              <h3>{{ ecoponto.descricao }}</h3>
               <span class="badge" :class="ecoponto.status === 'Ativo' ? 'badge-success' : 'badge-warning'">
                 {{ ecoponto.status }}
               </span>
             </div>
-            <div class="ecoponto-body">
-              <p><i class="fas fa-map-marker-alt"></i> {{ ecoponto.endereco }}</p>
-              <p><i class="fas fa-clock"></i> {{ ecoponto.horarioFuncionamento }}</p>
+            <div class="ecoponto-body ">
+              <p><i class="fas fa-map-marker-alt"></i> Cep - {{ ecoponto.cep }}</p>
+              <p><i class="fas fa-clock"></i> Bairro -  {{ ecoponto.bairro }}</p>
               <div class="tipos-aceitos">
-                <h4>Tipos Aceitos:</h4>
-                <div class="tipos-grid">
-                  <span v-for="tipo in ecoponto.tiposAceitos" :key="tipo" class="tipo-badge">
-                    {{ tipo }}
-                  </span>
-                </div>
+                <h4>Localizacao:</h4>
+                <small>
+                  <a
+                    :href="`https://www.google.com/maps?q=${ecoponto.latitude},${ecoponto.longitude}`"
+                    target="_blank"
+                    rel="noopener"
+                    class="text-decoration-none text-body"
+                  >
+                    <i class="bi bi-geo-alt-fill me-1"></i>Latidude - {{ecoponto.latitude }} Longitude - {{ecoponto.longitude}}
+                  </a>
+                </small>
               </div>
             </div>
           </div>
@@ -59,11 +63,11 @@
 
       <section class="features ">
         <div v-for="(item, index) in pilares" :key="index" class="feature-card bg-verde">
-          <div class="feature-icon">
-            <i :class="item.icon"></i>
+          <div class="feature-icon text-white">
+            <i :class="item.icon" class="text-white"></i>
           </div>
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.text }}</p>
+          <h3 class="text-white">{{ item.title }}</h3>
+          <p class="text-white">{{ item.text }}</p>
         </div>
       </section>
 
@@ -78,10 +82,10 @@
       <section class="features">
         <div v-for="(etapa, index) in etapas" :key="index" class="feature-card bg-verde">
           <div class="feature-icon">
-            <i :class="etapa.icon"></i>
+            <i :class="etapa.icon" class="text-white" ></i>
           </div>
-          <h3>{{ etapa.title }}</h3>
-          <p>{{ etapa.text }}</p>
+          <h3 class="text-white">{{ etapa.title }}</h3>
+          <p class="text-white">{{ etapa.text }}</p>
         </div>
       </section>
 
@@ -237,7 +241,7 @@ const footer = [
 }
 .bg-white { /* #ffffff - Branco */
   background-color: #ffffff !important;
-   
+
 }
 .text-white{
  color: #ffffff !important;
