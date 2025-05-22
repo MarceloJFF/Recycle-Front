@@ -155,7 +155,7 @@ main {
 }
 
 .feature-card {
-    background-color: #DDA15E;
+    background-color: var(--verde-escuro);
     border-radius: 10px;
     padding: 1.5rem;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -180,7 +180,7 @@ main {
 }
 .fa-hands-helping,.fa-handshake,.fa-award,.fa-map-marker-alt
 ,.fa-trash-alt,.fa-broom,.fa-box-open,.fa-truck{
-    color: #BC6C25;
+    color: var(--preto);
 }
 
 .feature-icon {
