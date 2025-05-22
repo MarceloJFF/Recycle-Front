@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { jwtDecode } from 'jwt-decode';
 import api from '@/services/api';
 import AcessoDto from '@/dto/AcessoDto';
