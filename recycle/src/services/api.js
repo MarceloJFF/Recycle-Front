@@ -14,7 +14,6 @@ const publicEndpoints = [
 
 const api = axios.create({
   baseURL: 'https://trilhas-desafio-4-production-890a.up.railway.app/', // ⬅️ troque pela URL da sua API
-   withCredentials: false, // Mude para true se usar cookies/sessões
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
