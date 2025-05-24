@@ -13,7 +13,7 @@ const publicEndpoints = [
 ];
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080', // ⬅️ troque pela URL da sua API
+  baseURL: 'https://trilhas-desafio-4-production-890a.up.railway.app/', // ⬅️ troque pela URL da sua API
   headers: {
     'Content-Type': 'application/json',
   },
