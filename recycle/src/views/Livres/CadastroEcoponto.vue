@@ -107,7 +107,7 @@ import axios from 'axios'
 
 async function submitForm() {
   try {
-    const response = await axios.post('http://localhost:8080/cadastro/ecoponto', form)
+    const response = await axios.post('https://trilhas-desafio-4-production-890a.up.railway.app/cadastro/ecoponto', form)
     alert('Cadastro realizado com sucesso')
     // Aqui você pode adicionar lógica para redirecionar ou limpar o formulário
   } catch (error) {

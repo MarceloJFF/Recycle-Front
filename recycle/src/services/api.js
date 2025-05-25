@@ -10,6 +10,7 @@ const publicEndpoints = [
   '/auth/verify',
   '/ecoponto'
 
+
   // Adicione outros endpoints públicos aqui
 ];
 
@@ -17,7 +18,8 @@ const api = axios.create({
   baseURL: 'https://trilhas-desafio-4-production-890a.up.railway.app/', // ⬅️ troque pela URL da sua API
   headers: {
     'Content-Type': 'application/json',
-  },
+    'Accept': 'application/json'
+  }
 });
 
 // Interceptor para adicionar o token em requisições que precisam de autenticação
