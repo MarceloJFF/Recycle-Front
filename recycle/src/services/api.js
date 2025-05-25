@@ -8,6 +8,8 @@ const publicEndpoints = [
   '/cadastro/ecoponto',
   '/auth/login',
   '/auth/verify',
+  '/ecoponto'
+
 
   // Adicione outros endpoints públicos aqui
 ];
