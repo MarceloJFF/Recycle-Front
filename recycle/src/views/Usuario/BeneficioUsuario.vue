@@ -65,7 +65,7 @@
               <td>{{ beneficio.qtdPontosNecessarios }}</td>
               <td>{{ beneficio.empresa }}</td>
               <td>
-                <button 
+                <button
                   class="btn btn-primary btn-sm"
                   @click="solicitarBeneficio(beneficio)"
                   :disabled="beneficio.solicitado"
@@ -153,10 +153,14 @@ const solicitacoes = ref([])
 const beneficiosFiltrados = computed(() => {
   if (!pesquisa.value) return beneficios.value
   const termoPesquisa = pesquisa.value.toLowerCase()
-  return beneficios.value.filter(beneficio => 
+  return beneficios.value.filter(beneficio =>
     beneficio.descricao.toLowerCase().includes(termoPesquisa)
   )
 })
+
+async function carregar solicitacoes(){
+
+}
 
 // Função para carregar os benefícios do backend
 async function carregarBeneficios() {

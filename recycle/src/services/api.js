@@ -8,12 +8,13 @@ const publicEndpoints = [
   '/cadastro/ecoponto',
   '/auth/login',
   '/auth/verify',
+  '/ecoponto'
 
   // Adicione outros endpoints públicos aqui
 ];
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080', // ⬅️ troque pela URL da sua API
+  baseURL: 'https://trilhas-desafio-4-production-890a.up.railway.app/', // ⬅️ troque pela URL da sua API
   headers: {
     'Content-Type': 'application/json',
   },
@@ -30,7 +31,8 @@ api.interceptors.request.use(
     if (!isPublicEndpoint) {
       const authStore = useAuthStore();
       const token = authStore.getToken();
-      if (token) {
+      const isValidToken = api.get('/auth/verify');
+      if (token && isValidToken) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
