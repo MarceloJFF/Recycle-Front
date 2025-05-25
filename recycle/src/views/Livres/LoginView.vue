@@ -134,7 +134,7 @@ async function apiPost(url, data) {
 async function handleLogin() {
   try {
     const response = await authStore.login(loginForm.login, loginForm.password)
-    if (authStore.user && authStore.user.tipo=="ecoponto") {  // Se temos uma resposta (token), o login foi bem sucedido
+    if (response && authStore.user.tipo=="ecoponto") {  // Se temos uma resposta (token), o login foi bem sucedido
       router.push('/ecoponto')
     } else {
       router.push('/usuario')

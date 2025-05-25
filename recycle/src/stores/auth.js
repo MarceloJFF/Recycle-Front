@@ -48,7 +48,7 @@ export const useAuthStore = defineStore('auth', () => {
         login: email,
         password: password
       });
-
+      console.log(response);
       if (response.data) {
         token.value = response.data;
         localStorage.setItem('token', response.data);
