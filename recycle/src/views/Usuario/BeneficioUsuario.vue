@@ -24,8 +24,8 @@
                 Minhas Solicitações
               </a>
             </li>
-            <li class="nav-item"><a class="nav-link" href="perfil.html">Perfil</a></li>
-            <li class="nav-item"><a class="nav-link" href="logout.html">Sair</a></li>
+            <li class="nav-item"><a class="nav-link" >Perfil</a></li>
+            <li class="nav-item"><a class="nav-link" @click="logout"  >Sair</a></li>
           </ul>
         </div>
       </div>
@@ -177,6 +177,9 @@ async function carregarBeneficios() {
   }
 }
 
+function logout(){
+  useAuthStore().logout();
+}
 // Função para solicitar um benefício
 async function solicitarBeneficio(beneficio) {
   try {
