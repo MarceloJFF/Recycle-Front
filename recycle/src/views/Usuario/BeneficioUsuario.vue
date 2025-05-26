@@ -18,7 +18,7 @@
         <div class="collapse navbar-collapse" id="navMenu">
          <ul class="navbar-nav ms-auto">
   <li class="nav-item">
-    <router-link class="nav-link active" to="/">Início</router-link>
+    <router-link class="nav-link active" to="/usuario">Início</router-link>
   </li>
   <li class="nav-item">
     <router-link class="nav-link" to="/usuario/beneficio">Benefícios</router-link>
