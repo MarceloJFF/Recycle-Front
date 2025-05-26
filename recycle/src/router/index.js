@@ -15,7 +15,7 @@ import BeneficioUsuario from '@/views/Usuario/BeneficioUsuario.vue'
 import ComoReciclar from '@/views/Livres/ComoReciclar.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory("https://recycle-front-black.vercel.app"),
   routes: [
     {
       path: '/',
