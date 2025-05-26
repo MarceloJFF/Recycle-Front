@@ -16,17 +16,26 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navMenu">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="/usuario">Início</a></li>
-            <li class="nav-item"><a class="nav-link active" href="/usuario/beneficio">Benefícios</a></li>
-            <li class="nav-item">
-              <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#minhasSolicitacoesModal">
-                Minhas Solicitações
-              </a>
-            </li>
-            <li class="nav-item"><a class="nav-link" >Perfil</a></li>
-            <li class="nav-item"><a class="nav-link" @click="logout"  >Sair</a></li>
-          </ul>
+         <ul class="navbar-nav ms-auto">
+  <li class="nav-item">
+    <router-link class="nav-link active" to="/">Início</router-link>
+  </li>
+  <li class="nav-item">
+    <router-link class="nav-link" to="/usuario/beneficio">Benefícios</router-link>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#minhasSolicitacoesModal">
+      Minhas Solicitações
+    </a>
+  </li>
+  <li class="nav-item">
+    <router-link class="nav-link" to="/usuario/perfil">Perfil</router-link>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#" @click.prevent="logout">Sair</a>
+  </li>
+</ul>
+
         </div>
       </div>
     </nav>
