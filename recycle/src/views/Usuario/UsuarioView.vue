@@ -20,7 +20,7 @@
               <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#minhasSolicitacoesModal">Minhas Solicitações</a>
             </li>
             <li class="nav-item"><a class="nav-link" href="/usuario/perfil">Perfil</a></li>
-            <li class="nav-item"><a class="nav-link" href="/logout">Sair</a></li>
+            <li class="nav-item"><a class="nav-link" @click="logout" href="/logout">Sair</a></li>
           </ul>
         </div>
       </div>
@@ -175,6 +175,9 @@ const quantidadeKg = ref(null);
 const solicitacoes = ref([]);
 const pontosUsuario = ref(0);
 
+function logout(){
+  useAuthStore().logout();
+}
 // Carrega os dados do usuário ao montar o componente
 async function carregarPerfil() {
   try {
