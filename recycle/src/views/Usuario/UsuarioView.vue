@@ -177,6 +177,8 @@
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth'
 import api from '@/services/api'
+import { useRouter } from 'vue-router'; // 👈 Importa o roteador
+const router = useRouter(); // 👈 Inicializa o roteador
 
 // Substitua os dados mockados por uma chamada real à API
 const pontos = ref([]);
@@ -188,6 +190,8 @@ const pontosUsuario = ref(0);
 
 function logout(){
   useAuthStore().logout();
+    router.push('/login'); // 👈 Redireciona para a rota de login
+
 }
 // Carrega os dados do usuário ao montar o componente
 async function carregarPerfil() {
