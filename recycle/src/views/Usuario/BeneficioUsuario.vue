@@ -167,7 +167,7 @@ const beneficiosFiltrados = computed(() => {
   )
 })
 
-async function carregar solicitacoes(){
+async function carregarSolicitacoes(){
 
 }
 
