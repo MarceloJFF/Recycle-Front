@@ -207,7 +207,7 @@ async function carregarPerfil() {
 }
 
 async function carregarSolicitacoes(){
-  const response = await api.get('/entregas/', {
+  const response = await api.get('/entregas/usuario', {
     params: { loginUsuario: useAuthStore().user.login }
   });
   solicitacoes.value = response.data;
